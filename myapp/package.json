@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "dev": "cd myapp/backend && npm run dev"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.0",
+    "@types/node": "^25.1.0"
+  }
+}
