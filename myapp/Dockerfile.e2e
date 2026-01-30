@@ -1,22 +1,17 @@
-# 1) 选择 Playwright 官方镜像（包含浏览器 + 系统依赖）
-# 版本要和你项目里的 @playwright/test 大体匹配更稳
 FROM mcr.microsoft.com/playwright:v1.58.0-jammy
 
-# 2) 设定工作目录
 WORKDIR /app
 
-# 3) 先复制依赖清单（利用 Docker 缓存）
+# ---------- 1) 安装 root 依赖（主要是 @playwright/test） ----------
 COPY package.json package-lock.json* ./
-
-# 4) 安装依赖（可复现）
-# 如果你用 pnpm/yarn，这里要换命令
 RUN npm ci
 
-# 5) 再复制项目剩余文件
+# ---------- 2) 安装 backend 依赖 ----------
+COPY myapp/backend/package.json myapp/backend/package-lock.json* ./myapp/backend/
+RUN cd myapp/backend && npm ci
+
+# ---------- 3) 拷贝剩余代码 ----------
 COPY . .
 
-# 6)（可选）如果你需要构建（例如 Next/Vite preview），可开启
-# RUN npm run build
-
-# 7) 运行 E2E（默认命令）
+# 默认运行 E2E
 CMD ["npx", "playwright", "test"]
